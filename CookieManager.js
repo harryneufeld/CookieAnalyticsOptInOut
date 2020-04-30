@@ -8,25 +8,42 @@
  */
 
 // Some crappy js classes - let's do it quick'n'dirty - sorry, i just hate js
-class CookieManager
+class CookieMonster
 {
-    get GetCookie(name = undefined, value = undefined)
+    GetCookie(name = undefined, value = undefined)
     {
-        var cookies, c;
+        var cookies, c, n, v;
         cookies = document.cookie.split(';');
         for (var i = 0; i < cookies.length; i++)
         {
             c = cookies[i].split('=');
-            if ((name != undefined && c[0] == name) || (value != undefined && c[1] == value))
+            n = c[0].trim();
+            v = c[1].trim();
+            if ((name != undefined && n == name) || (value != undefined && v == value))
             {
-                return new Cookie(c[0], c[1]);
+                return new Cookie(n, v);
             }
-
         }
         return undefined;
     }
 
-    CookiesEnabled()
+    SetCookie(name, value, expirationDate = undefined)
+    {
+        if (this.IsCookiesEnabled())
+        {
+            // check if cookie already exists and delete it
+            var cookie = cookieManager.GetCookie(name);
+            if (cookie != undefined && !additive)
+            {
+                new Cookie(name, "", this.GetExpirationDateString(1, true)).SetCookie();
+            }
+            // give the cookie to the cookiemonster
+            var c = new Cookie(name, value, expirationDate);
+            c.SetCookie();  // nomnom
+        }
+    }
+
+    IsCookiesEnabled()
     {
         let cookieEnabled = (navigator.cookieEnabled) ? true : false;
 
@@ -41,30 +58,52 @@ class CookieManager
 
 class Cookie
 {
-    constructor(name = undefined, value = undefined, expirationDate = undefined)
+    constructor(name, value, expirationDate = undefined)
     {
         this.name = name;        
         this.value = value;
         this.expirationDate = expirationDate;
     }
 
-    SetCookie(value, additive = false)
-    {
-        this.value = value;
-        this.expirationDate = this.#GetExpirationDateString();
-        
-        var cookieManager = new CookieManager();
-        var cookie = cookieManager.GetCookie(this.name);
-        if (cookie == undefined || (cookie.value != this.value && !additive))
-            if (additive)
-                this.value = cookie.value + ";" + this.value;
-            document.cookie = this.name + "=" + this.value + "; " + this.expirationDate;
+    SetCookie(value = undefined, additive = false)
+    {        
+        if (value != undefined)
+            this.value = value;
+        if (this.expirationDate == undefined)
+            this.expirationDate = this.GetExpirationDateString();
+        document.cookie = this.name + "=" + this.value + "; " + this.expirationDate;
     }
 
-    get #GetExpirationDateString()
+    GetExpirationDateString(days = 14, substract = false)
     {
         var exdate = new Date();
-        return exdate.setDate(exdate.getDate() + 14);
+        if (substract)
+            return exdate.setDate(exdate.getDate() - days);
+        else
+            return exdate.setDate(exdate.getDate() + days);
     }
 
+}
+
+/* Checking Opt-In Settings
+ * 
+ */
+
+// Checking if Cookie Master is set
+var message, accept, decline, mainCookie, cookieManager = new CookieMonster();
+
+if (cookieManager.IsCookiesEnabled())
+{
+    alert("Achtung: Cookies sind deaktiviert");
+    return;
+}
+
+mainCookie = cookieManager.GetCookie("iam_cookieMonster");
+if (mainCookie == undefined)
+{
+    alert('Setting Cookie');
+    cookieManager.SetCookie("iam_cookieMonster", "allow");
+} else
+{
+    alert('Cookie already set');
 }
