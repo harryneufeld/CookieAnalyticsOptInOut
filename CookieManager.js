@@ -10,6 +10,13 @@
 // Some crappy js classes - let's do it quick'n'dirty - sorry, i just hate js
 class CookieMonster
 {
+    constructor()
+    {
+        this.mainCookie = this.GetCookie("iam_mainCookie");
+        if (this.mainCookie == undefined)
+            this.mainCookie = new Cookie("iam_mainCookie");
+    }
+
     GetCookie(name = undefined, value = undefined)
     {
         var cookies, c, n, v;
@@ -66,21 +73,49 @@ class Cookie
     }
 
     SetCookie(value = undefined, additive = false)
-    {        
+    {   
+        var expirationDateString = "";
+        var useMaxAge = true;
+        var useExpirationDate = false;
+
         if (value != undefined)
             this.value = value;
         if (this.expirationDate == undefined)
             this.expirationDate = this.GetExpirationDateString();
-        document.cookie = this.name + "=" + this.value + "; " + this.expirationDate;
+        
+        if (useMaxAge)
+            expirationDateString = "max-age=" + this.GetMaxAge()+";";
+        if (useExpirationDate)
+            expirationDateString += "expires=" + this.expirationDate + ";";
+        document.cookie = this.name + "=" + this.value + "; " + expirationDateString;
     }
 
     GetExpirationDateString(days = 14, substract = false)
     {
         var exdate = new Date();
         if (substract)
-            return exdate.setDate(exdate.getDate() - days);
+        {
+            exdate.setDate(exdate.getDate() - days);
+        }
         else
-            return exdate.setDate(exdate.getDate() + days);
+        {
+            exdate.setDate(exdate.getDate() + days);
+        }
+        return exdate.toGMTString();
+    }
+
+    GetMaxAge(days = 14, substract = false)
+    {
+        var seconds;
+        if (substract)
+        {
+            seconds = - days * 24 * 60 * 60;
+        }
+        else
+        {
+            seconds = days * 24 * 60 * 60;
+        }
+        return seconds;
     }
 
 }
@@ -90,20 +125,14 @@ class Cookie
  */
 
 // Checking if Cookie Master is set
-var message, accept, decline, mainCookie, cookieManager = new CookieMonster();
+var message, accept, decline, cookieManager = new CookieMonster();
 
-if (cookieManager.IsCookiesEnabled())
-{
-    alert("Achtung: Cookies sind deaktiviert");
-    return;
-}
-
-mainCookie = cookieManager.GetCookie("iam_cookieMonster");
-if (mainCookie == undefined)
+if (cookieManager.IsCookiesEnabled() && cookieManager.mainCookie.value == undefined)
 {
     alert('Setting Cookie');
-    cookieManager.SetCookie("iam_cookieMonster", "allow");
+    cookieManager.mainCookie.SetCookie("allow_cookies");
 } else
 {
-    alert('Cookie already set');
+    alert('Cookie already set. Refreshing it.');
+    cookieManager.mainCookie.SetCookie();
 }
