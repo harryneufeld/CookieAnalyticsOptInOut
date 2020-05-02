@@ -1,4 +1,4 @@
-/*   Cookie Manager Addon for any Website
+/*   Opt-In Manager Addon for any Website
  *   Copyright (C) by Interarts Media UG (haftungsbeschränkt) - 2020
  *   Web:        www.interarts-media.de
  *   Author:     Harry Neufeld
@@ -7,14 +7,26 @@
  *   Revision:   0
  */
 
-// Some crappy js classes - let's do it quick'n'dirty - sorry, i just hate js
+/* GOOGLE ANALYTICS - SET TRACKING ID HERE */
+var analyticsTrackingId = "UA-TEST-1";
+/* THATS IT, THANKS FOR YOUR PATIENCE */
+
+var debug = true;
+
+// Cookiemanager Classes
 class CookieMonster
 {
     constructor()
     {
+        // Main Cookie to see if we can save cookies
         this.mainCookie = this.GetCookie("iam_mainCookie");
         if (this.mainCookie == undefined)
             this.mainCookie = new Cookie("iam_mainCookie");
+
+        // Analytics Cookie to see if we can use Analytics
+        this.googleAnalytics = this.GetCookie("iam_googleAnalytics");
+        if (this.googleAnalytics == undefined)
+            this.googleAnalytics = new Cookie("iam_googleAnalytics");
     }
 
     GetCookie(name = undefined, value = undefined)
@@ -106,10 +118,10 @@ class Cookie
 
     GetMaxAge(days = 14, substract = false)
     {
-        var seconds;
+        var seconds = 0;
         if (substract)
         {
-            seconds = - days * 24 * 60 * 60;
+            seconds =- days * 24 * 60 * 60;
         }
         else
         {
@@ -120,19 +132,92 @@ class Cookie
 
 }
 
-/* Checking Opt-In Settings
- * 
- */
+class Banner
+{
+    constructor()
+    {
+        this.IsSetDemoTheme = false;
+        this.SetUpBody();
+    }
 
-// Checking if Cookie Master is set
-var message, accept, decline, cookieManager = new CookieMonster();
+    SetUpBody()
+    {
+        if (document.getElementById("body").includes("iam-OptInBanner"))
+        {
+            this.IsSetDemoTheme = true;
+            this.SetupDemoBody();
+        } else
+        {
+            this.body = document.getElementById("iam-CookieMonster")
+        }
+    }
+
+}
+
+// Google Analytics Classes
+class AnalyticsManager
+{
+    constructor(trackingId = "")
+    {
+        this.trackingId = trackingId;
+    }
+
+    LoadAndExecute()
+    {
+        if (document.getElementsByTagName('head')[0].innerHTML.toString().includes("analytics.js"))
+        {
+            if (debug)
+                console.log("Error: Analytics is alread set up!")
+        }
+        else
+        {
+            var extScript = document.createElement("script");
+            extScript.src = "https://www.googletagmanager.com/gtag/js?id=" + this.trackingId;
+            extScript.async = true;
+            // var inlineScript = document.createElement("script");
+            // inlineScript.text = "window.dataLayer = window.dataLayer || [];"
+            //     +"function gtag(){dataLayer.push(arguments);}"
+            //     +"gtag('js', new Date());"
+            //     +"gtag('config', '" + this.trackingId + "');";
+
+            document.getElementsByTagName('head')[0].appendChild(extScript);
+            //document.getElementsByTagName('head')[0].appendChild(inlineScript);
+            
+            // Making analytics stuff work
+            window.dataLayer = window.dataLayer || [];
+            function gtag()
+            {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+            gtag('config', this.trackingId);
+
+            if (debug)
+                console.log("Analytics ready set up.");
+        }
+    }
+}
+
+// Run cookie-check and Opt-In modules
+var message, accept, decline, cookieManager = new CookieMonster(), analyticsManager = new AnalyticsManager(analyticsTrackingId);
 
 if (cookieManager.IsCookiesEnabled() && cookieManager.mainCookie.value == undefined)
 {
-    alert('Setting Cookie');
+    if (debug)
+        console.log('Setting Cookie');
     cookieManager.mainCookie.SetCookie("allow_cookies");
 } else
 {
-    alert('Cookie already set. Refreshing it.');
+    if (debug)
+        console.log('Cookie already set. Refreshing it.');
     cookieManager.mainCookie.SetCookie();
+}
+
+if (cookieManager.googleAnalytics.value == "allow_analytics")
+{
+    analyticsManager.LoadAndExecute();
+} else 
+{
+    if (debug)
+        console.log("Analyitcs will not be loaded.");
 }
