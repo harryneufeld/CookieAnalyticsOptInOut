@@ -36,11 +36,14 @@ class CookieMonster
         for (var i = 0; i < cookies.length; i++)
         {
             c = cookies[i].split('=');
-            n = c[0].trim();
-            v = c[1].trim();
-            if ((name != undefined && n == name) || (value != undefined && v == value))
+            if (c[0] != undefined && c[1] != undefined)
             {
-                return new Cookie(n, v);
+                n = c[0].trim();
+                v = c[1].trim();
+                if ((name != undefined && n == name) || (value != undefined && v == value))
+                {
+                    return new Cookie(n, v);
+                }
             }
         }
         return undefined;
@@ -136,20 +139,77 @@ class Banner
 {
     constructor()
     {
+        this.cookieManager = new CookieMonster();
         this.IsSetDemoTheme = false;
-        this.SetUpBody();
+        this.InitializeBody();
     }
 
-    SetUpBody()
+    get GetBody()
     {
-        if (document.getElementById("body").includes("iam-OptInBanner"))
+        return this.body;
+    }
+    set SetBody(html)
+    {
+        this.body = html;
+    }
+
+    AcceptButtonClick()
+    {
+        if (this.IsCookiesChecked)
+        {
+            this.cookieManager.mainCookie.value = "allow";
+            this.cookieManager.mainCookie.SetCookie();
+        } else 
+        {
+            this.cookieManager.mainCookie.value = "decline";
+            this.cookieManager.mainCookie.SetCookie();
+        }
+        if (this.IsAnalyticsChecked)
+        {
+            this.cookieManager.googleAnalytics.value = "allow";
+            this.cookieManager.googleAnalytics.SetCookie();
+        } else 
+        {
+            this.cookieManager.googleAnalytics.value = "decline";
+            this.cookieManager.googleAnalytics.SetCookie();
+        }
+
+        alert("Saved!");
+    }
+
+    IsCookiesChecked()
+    {
+        return document.getElementById("iam-ChkCookie").checked;
+    }
+
+    IsAnalyticsChecked()
+    {
+        return document.getElementById("iam-ChkAnalytics").checked;
+    }
+
+    InitializeBody()
+    {
+        if (document.body.innerHTML.toString().includes("iam-OptInBanner"))
         {
             this.IsSetDemoTheme = true;
-            this.SetupDemoBody();
+            this.InitializeDemoBody();
         } else
         {
-            this.body = document.getElementById("iam-CookieMonster")
+            this.body = document.getElementById("iam-CookieMonster").innerHTML();
         }
+
+        if (this.cookieManager.mainCookie.value != undefined && this.cookieManager.googleAnalytics.value != undefined)
+            this.Hide();
+    }
+
+    InitializeDemoBody()
+    {
+        this.body = '<style>#iam-OptInBanner{position: absolute; display: flex; background-color: black; color: #fff; flex-direction: column; justify-content: center; align-content: center; align-items: center; bottom: 0; height: 15%; width: 100%;}#iam-OptInBanner-Content{position: absolute; display: flex; justify-content: center; padding: 15px; color: #fff; text-align: center; top: 0; left: 0; right: 0; margin: 0;}#iam-OptInBanner-ButtonWrapper{display: flex; position: absolute; justify-content: center; bottom: 0; left: 0; right: 0; padding-right: 30px; padding-bottom: 15px; padding-top: 15px;}#iam-OptInBanner-Button, #iam-OptInBanner-ButtonMore{flex-direction: column; color: #fff; min-width: 150px; background-color: #000; padding-left: 15px; padding-right: 15px; padding-top: 10px; padding-bottom: 10px; margin-left: 15px; margin-right: 15px; border: solid 1px #fff;}#iam-OptInBanner-Button:hover, #iam-OptInBanner-ButtonMore:hover{background-color: #fff; color: #000; border: solid 1px #fff;}</style> <div id="iam-OptInBanner" class="iam-OptIn-Cookies iam-OptIn-Analytics"> <div id="iam-OptInBanner-Content"> Um die Benutzererfahrung zu verbessern verwenden wir gängige techniken wie Cookies und Google Analyitcs. Um unsere Webseite uneingeschränkt nutzen zu können stimmen Sie einfach der Nutzung dieser Dienste zu. </div><div id="iam-OptInBanner-Options"> <b>Aktive Optionen:</b> <input type="checkbox" name="iam-ChkCookie" value="UseCookies" checked><label> Cookie-Nutzung</label> <input type="checkbox" name="iam-ChkAnalytics" value="UseAnalytics" checked><label> Google Analytics</label> </div><div id="iam-OptInBanner-ButtonWrapper"> <button id="iam-OptInBanner-Button"> Akzeptieren </button> <button id="iam-OptInBanner-ButtonMore"> Mehr Erfahren </button> </div></div>';
+    }
+
+    Hide()
+    {
+        document.getElementById("iam-OptInBanner").remove();
     }
 
 }
@@ -199,25 +259,32 @@ class AnalyticsManager
 }
 
 // Run cookie-check and Opt-In modules
-var message, accept, decline, cookieManager = new CookieMonster(), analyticsManager = new AnalyticsManager(analyticsTrackingId);
+document.addEventListener('DOMContentLoaded', function(event) 
+{
+    var message, accept, decline, cookieManager = new CookieMonster(), analyticsManager = new AnalyticsManager(analyticsTrackingId), optInBanner = new Banner();
 
-if (cookieManager.IsCookiesEnabled() && cookieManager.mainCookie.value == undefined)
-{
-    if (debug)
-        console.log('Setting Cookie');
-    cookieManager.mainCookie.SetCookie("allow_cookies");
-} else
-{
-    if (debug)
-        console.log('Cookie already set. Refreshing it.');
-    cookieManager.mainCookie.SetCookie();
-}
+    if (cookieManager.IsCookiesEnabled() && cookieManager.mainCookie.value == undefined)
+    {
+        if (debug)
+            console.log('Setting Cookie');
+        cookieManager.mainCookie.SetCookie("allow");
+    } else
+    {
+        if (debug)
+            console.log('Cookie already set. Refreshing it.');
+        cookieManager.mainCookie.SetCookie();
+    }
 
-if (cookieManager.googleAnalytics.value == "allow_analytics")
-{
-    analyticsManager.LoadAndExecute();
-} else 
-{
-    if (debug)
-        console.log("Analyitcs will not be loaded.");
-}
+    if (cookieManager.googleAnalytics.value == "allow")
+    {
+        analyticsManager.LoadAndExecute();
+    } else 
+    {
+        if (debug)
+            console.log("Analyitcs will not be loaded.");
+    }
+
+    // Button Events
+    document.getElementById("iam-OptInBanner-Button").onclick = function(){optInBanner.AcceptButtonClick()};
+    document.getElementById("iam-OptInBanner-ButtonMore").onclick = function() {optInBanner.DeclineButtonClick()};
+})
