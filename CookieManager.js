@@ -137,9 +137,10 @@ class Cookie
 
 class Banner
 {
-    constructor()
+    constructor(cookieManager, analyticsManager)
     {
-        this.cookieManager = new CookieMonster();
+        this.cookieManager = cookieManager;
+        this.analyticsManager = analyticsManager;
         this.IsSetDemoTheme = false;
         this.InitializeBody();
     }
@@ -174,7 +175,10 @@ class Banner
             this.cookieManager.googleAnalytics.SetCookie();
         }
 
-        alert("Saved!");
+        this.Hide();
+        this.analyticsManager.LoadAndExecute();
+
+        alert("Saved and Loaded!");
     }
 
     IsCookiesChecked()
@@ -189,13 +193,13 @@ class Banner
 
     InitializeBody()
     {
-        if (document.body.innerHTML.toString().includes("iam-OptInBanner"))
+        if (document.getElementById("iam-OptInBanner") == null)
         {
             this.IsSetDemoTheme = true;
             this.InitializeDemoBody();
         } else
         {
-            this.body = document.getElementById("iam-CookieMonster").innerHTML();
+            this.body = document.getElementById("iam-OptInBanner").html;
         }
 
         if (this.cookieManager.mainCookie.value != undefined && this.cookieManager.googleAnalytics.value != undefined)
@@ -211,6 +215,11 @@ class Banner
     Hide()
     {
         document.getElementById("iam-OptInBanner").remove();
+    }
+
+    Show()
+    {
+        document.body.append(this.body);
     }
 
 }
@@ -235,14 +244,7 @@ class AnalyticsManager
             var extScript = document.createElement("script");
             extScript.src = "https://www.googletagmanager.com/gtag/js?id=" + this.trackingId;
             extScript.async = true;
-            // var inlineScript = document.createElement("script");
-            // inlineScript.text = "window.dataLayer = window.dataLayer || [];"
-            //     +"function gtag(){dataLayer.push(arguments);}"
-            //     +"gtag('js', new Date());"
-            //     +"gtag('config', '" + this.trackingId + "');";
-
             document.getElementsByTagName('head')[0].appendChild(extScript);
-            //document.getElementsByTagName('head')[0].appendChild(inlineScript);
             
             // Making analytics stuff work
             window.dataLayer = window.dataLayer || [];
@@ -262,7 +264,8 @@ class AnalyticsManager
 // Run cookie-check and Opt-In modules
 document.addEventListener('DOMContentLoaded', function(event) 
 {
-    var message, accept, decline, cookieManager = new CookieMonster(), analyticsManager = new AnalyticsManager(analyticsTrackingId), optInBanner = new Banner();
+    var message, accept, decline, cookieManager = new CookieMonster(), analyticsManager = new AnalyticsManager(analyticsTrackingId);
+    var optInBanner = new Banner(cookieManager, analyticsManager);
 
     if (cookieManager.IsCookiesEnabled() && cookieManager.mainCookie.value == undefined)
     {
@@ -286,6 +289,8 @@ document.addEventListener('DOMContentLoaded', function(event)
     }
 
     // Button Events
-    document.getElementById("iam-OptInBanner-Button").onclick = function(){optInBanner.AcceptButtonClick()};
-    document.getElementById("iam-OptInBanner-ButtonMore").onclick = function() {optInBanner.DeclineButtonClick()};
+    if (document.getElementById("iam-OptInBanner-Button") != null)
+        document.getElementById("iam-OptInBanner-Button").onclick = function(){optInBanner.AcceptButtonClick()};
+    if (document.getElementById("iam-OptInBanner-ButtonMore") != null)
+        document.getElementById("iam-OptInBanner-ButtonMore").onclick = function() {optInBanner.DeclineButtonClick()};
 })
