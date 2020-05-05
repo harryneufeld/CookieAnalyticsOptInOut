@@ -10,11 +10,13 @@ It's a basic JS Library for Handling Cookies with additional Google Analytics ma
 
 ## How To Setup
 Place following code in your `<head></head>` Tag:
-```<script type="text/javascript">
+```javascript
+<script type="text/javascript">
     var analyticsTrackingId = "TRACKINGID";
     var analyticsOptInMode = false;
 </script>
-<script src="CookieManager.js"></script>```
+<script src="CookieManager.js"></script>
+```
 
 Change the value "analyticsTrackingId" to your Tracking-Id of google.
 
