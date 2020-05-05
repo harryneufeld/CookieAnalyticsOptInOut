@@ -37,8 +37,9 @@ A little Button will then be displayed to change the options.
 If you would like to use it to manage Cookies or manage Google Analytics you can use following Objects and Classes:
 
 ### cookieManager-Object/Class
-The cookieManager-Object is accessible and has following Methods:
 ---
+The cookieManager-Object is accessible and has following Methods:
+
 #### GetCookie(name, value)
 Searches for a Cookie with the name *name* and value (optional) of *value*
 
@@ -66,10 +67,11 @@ cookieManager.googleAnalytics.value == "allow" when Analytics is accepted
 cookieManager.googleAnalytics.value == "decline" when Analytics is declined
 
 ### Cookie-Class
+---
 The Cookie Class represents one Cookie. A Cookie can Set/Change a Value of itself.
 
 Constructor accepts name, value and MaxAge (Optional)
----
+
 #### SetCookie(value)
 Sets the value of the Cookie (optional). It can use the values given to constructor.
 
