@@ -41,7 +41,7 @@ If you would like to use it to manage Cookies or manage Google Analytics you can
 The cookieManager-Object is accessible and has following Methods:
 
 #### GetCookie(name, value)
-Searches for a Cookie with the name *name* and value (optional) of *value*
+Searches for a Cookie with the name `name` and value (optional) of `value`
 
 Returns a Cookie Object with a `.value` property.
 
