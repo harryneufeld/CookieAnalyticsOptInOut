@@ -43,28 +43,28 @@ The cookieManager-Object is accessible and has following Methods:
 #### GetCookie(name, value)
 Searches for a Cookie with the name *name* and value (optional) of *value*
 
-Returns a Cookie Object with a ".value" property.
+Returns a Cookie Object with a `.value` property.
 
 #### SetCookie(name, value, expirationDate)
-Sets a Cookie with name of *name*, value of *value* and expirationDate (Optional - more like MaxAge) of *expirationDate*.
+Sets a Cookie with name of `name`, value of `value` and expirationDate (Optional - more like MaxAge) of `expirationDate`.
 
 #### IsCookiesEnabled()
-Checks if Cookies are activated in Browser or if it's possible to Set Cookies in this Browser. Return a bool.
+Checks if Cookies are activated in Browser or if it's possible to Set Cookies in this Browser. Returns a bool.
 
 Also it has the two main Cookies:
 #### mainCookie
 Which is the main cookie for controlling if Cookies are accepted from User or not.
 
-cookieManager.mainCookie.value == "allow" when Cookies are accepted
+`cookieManager.mainCookie.value == "allow"` when Cookies are accepted
 
-cookieManager.mainCookie.value == "decline" when Cookies are declined
+`cookieManager.mainCookie.value == "decline"` when Cookies are declined
 
 #### googleAnalytics
 Which is the main google analytics cookie for controlling if analytics is accepted from User or not.
 
-cookieManager.googleAnalytics.value == "allow" when Analytics is accepted
+`cookieManager.googleAnalytics.value == "allow"` when Analytics is accepted
 
-cookieManager.googleAnalytics.value == "decline" when Analytics is declined
+`cookieManager.googleAnalytics.value == "decline"` when Analytics is declined
 
 ### Cookie-Class
 ---
@@ -76,6 +76,6 @@ Constructor accepts name, value and MaxAge (Optional)
 Sets the value of the Cookie (optional). It can use the values given to constructor.
 
 #### GetMaxAge(days, substract)
-Returns a calculated MaxAge-Value with *+ days from today*.
+Returns a calculated MaxAge-Value with `+ days from today`.
 
-Set *substract* to *true* to substract *- days from today* eg. for deleting the cookie.
+Set `substract` to *true* to substract `- days from today` eg. for deleting the cookie.
