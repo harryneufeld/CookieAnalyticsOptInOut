@@ -33,7 +33,7 @@ A little Button will then be displayed to change the options.
 [https://CookieManager.demo.interarts-media.de](https://CookieManager.demo.interarts-media.de)
 
 ## How to Use it
-if you would like to use it to manage Cookies or manage Google Analytics your can use following Objects and Classes:
+If you would like to use it to manage Cookies or manage Google Analytics you can use following Objects and Classes:
 
 ### cookieManager-Object/Class
 The cookieManager-Object is accessible and has following Methods:
