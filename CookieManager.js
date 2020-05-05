@@ -8,8 +8,14 @@
  */
 
 /* GOOGLE ANALYTICS - SET TRACKING ID HERE */
-var analyticsTrackingId = "UA-TEST-1";
-/* THATS IT, THANKS FOR YOUR PATIENCE */
+if (analyticsTrackingId == undefined)
+    var analyticsTrackingId = "UA-TEST-1";
+/* GOOGLE ANALYTICS - SET Opt-In instead of Opt-Out */
+if (analyticsOptInMode == undefined)
+    var analyticsOptInMode = false;
+/* BANNER - SET Banner Message */
+if (bannerMessage == undefined)
+    var bannerMessage = "Wir verwenden u.a. Cookies zur optimierten Darstellung und Auswertung, sowie zur Verbesserung unserer Website und unserer Services. Sollten Sie damit nicht einverstanden sein treffen Sie hier ihre Datenschutzeinstellungen. Mit dem Klick auf 'Anwenden' werden Ihre Einstellungen übernommen.";
 
 var debug = true;
 
@@ -156,7 +162,7 @@ class Banner
 
     AcceptButtonClick()
     {
-        if (this.IsCookiesChecked)
+        if (this.IsCookiesEnabled())
         {
             this.cookieManager.mainCookie.value = "allow";
             this.cookieManager.mainCookie.SetCookie();
@@ -165,30 +171,35 @@ class Banner
             this.cookieManager.mainCookie.value = "decline";
             this.cookieManager.mainCookie.SetCookie();
         }
-        if (this.IsAnalyticsChecked)
+        if (this.IsAnalyticsEnabled())
         {
             this.cookieManager.googleAnalytics.value = "allow";
             this.cookieManager.googleAnalytics.SetCookie();
+            this.analyticsManager.LoadAndExecute();
         } else 
         {
             this.cookieManager.googleAnalytics.value = "decline";
             this.cookieManager.googleAnalytics.SetCookie();
+            this.analyticsManager.UnloadAndExit();
         }
 
         this.Hide();
-        this.analyticsManager.LoadAndExecute();
-
-        alert("Saved and Loaded!");
     }
 
-    IsCookiesChecked()
+    IsCookiesEnabled()
     {
-        return document.getElementById("iam-ChkCookie").checked;
+        if (document.getElementById("iam-ChkCookie").checked)
+            return true;
+        else
+            return false;
     }
 
-    IsAnalyticsChecked()
+    IsAnalyticsEnabled()
     {
-        return document.getElementById("iam-ChkAnalytics").checked;
+        if (document.getElementById("iam-ChkAnalytics").checked)
+            return true;
+        else
+            return false;
     }
 
     InitializeBody()
@@ -214,12 +225,28 @@ class Banner
 
     Hide()
     {
-        document.getElementById("iam-OptInBanner").remove();
+        document.getElementById("iam-OptInBanner").style.display = "none";
+        document.getElementById("iam-OptInManager").style.display = "block";
     }
 
     Show()
     {
-        document.body.append(this.body);
+        document.getElementById("iam-OptInBanner").style.display = "flex";
+        document.getElementById("iam-OptInManager").style.display = "none";
+
+        this.UpdateCheckboxes()
+    }
+
+    UpdateCheckboxes()
+    {
+        if (this.cookieManager.mainCookie.value == "allow")
+            document.getElementById("iam-ChkCookie").checked = true;
+        else
+            document.getElementById("iam-ChkCookie").checked = false;
+        if (this.cookieManager.googleAnalytics.value == "allow")
+            document.getElementById("iam-ChkAnalytics").checked = true;
+        else
+            document.getElementById("iam-ChkAnalytics").checked = false;
     }
 
 }
@@ -237,40 +264,55 @@ class AnalyticsManager
         if (document.getElementsByTagName('head')[0].innerHTML.toString().includes("analytics.js"))
         {
             if (debug)
-                console.log("Error: Analytics is alread set up!")
+                console.log("Not Loading. Analytics is alread set up!")
         }
         else
         {
-            var extScript = document.createElement("script");
-            extScript.src = "https://www.googletagmanager.com/gtag/js?id=" + this.trackingId;
-            extScript.async = true;
-            document.getElementsByTagName('head')[0].appendChild(extScript);
-            
-            // Making analytics stuff work
-            window.dataLayer = window.dataLayer || [];
-            function gtag()
+            this.extScript = document.createElement("script");
+            this.extScript.src = "https://www.googletagmanager.com/gtag/js?id=" + this.trackingId;
+            this.extScript.async = true;
+            this.extScript.id = "iam-googleAnalyticsTag";
+            this.analyticsScript = document.createElement("script");
+            this.analyticsScript.type = "text/javascript";
+            this.analyticsScript.async = true;
+            this.analyticsScript.id = "iam-googleAnalyticsLib";
+            this.analyticsScript.src = "https://www.google-analytics.com/analytics.js";
+            document.getElementsByTagName('head')[0].appendChild(this.extScript);
+            document.getElementsByTagName('head')[0].appendChild(this.analyticsScript);
+ 
+            // analytics, pls make some magic
+            window.ga = window.ga || function ()
             {
-                dataLayer.push(arguments);
-            }
-            gtag('js', new Date());
-            gtag('config', this.trackingId);
+                (ga.q = ga.q || []).push(arguments)
+            };
+            ga.l = +new Date;
+            ga('create', this.trackingId, 'auto');
+            ga('send', 'pageview');
 
             if (debug)
-                console.log("Analytics ready set up.");
+                console.log("Analytics is set up.");
         }
+    }
+
+    UnloadAndExit()
+    {
+        if (debug)
+            console.log("Unloading Google Analytics");
+        
+        this.extScript.remove();
+        this.analyticsScript.remove();
     }
 }
 
 // Run cookie-check and Opt-In modules
 document.addEventListener('DOMContentLoaded', function(event) 
 {
-    var message, accept, decline, cookieManager = new CookieMonster(), analyticsManager = new AnalyticsManager(analyticsTrackingId);
+    var cookieManager = new CookieMonster();
+    var analyticsManager = new AnalyticsManager(analyticsTrackingId);
     var optInBanner = new Banner(cookieManager, analyticsManager);
 
     if (cookieManager.IsCookiesEnabled() && cookieManager.mainCookie.value == undefined)
     {
-        if (debug)
-            console.log('Setting Cookie');
         cookieManager.mainCookie.SetCookie("allow");
     } else
     {
@@ -290,7 +332,13 @@ document.addEventListener('DOMContentLoaded', function(event)
 
     // Button Events
     if (document.getElementById("iam-OptInBanner-Button") != null)
-        document.getElementById("iam-OptInBanner-Button").onclick = function(){optInBanner.AcceptButtonClick()};
+        document.getElementById("iam-OptInBanner-Button").onclick = function () { optInBanner.AcceptButtonClick() };
     if (document.getElementById("iam-OptInBanner-ButtonMore") != null)
-        document.getElementById("iam-OptInBanner-ButtonMore").onclick = function() {optInBanner.DeclineButtonClick()};
+        document.getElementById("iam-OptInBanner-ButtonMore").onclick = function () { optInBanner.DeclineButtonClick() };
+    if (document.getElementById("iam-OptInManager") != null)
+        document.getElementById("iam-OptInManager").onclick = function () { optInBanner.Show() };
+    
+    // Launch Google Analytics
+    if (cookieManager.googleAnalytics.value == "allow" || !analyticsOptInMode)
+        analyticsManager.LoadAndExecute();
 })
