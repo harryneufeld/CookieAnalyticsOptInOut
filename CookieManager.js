@@ -15,7 +15,7 @@ if (analyticsOptInMode == undefined)
     var analyticsOptInMode = false;
 /* BANNER - SET Banner Message */
 if (bannerMessage == undefined)
-    var bannerMessage = "Wir verwenden u.a. Cookies zur optimierten Darstellung und Auswertung, sowie zur Verbesserung unserer Website und unserer Services. Sollten Sie damit nicht einverstanden sein treffen Sie hier ihre Datenschutzeinstellungen. Mit dem Klick auf 'Anwenden' werden Ihre Einstellungen �bernommen.";
+    var bannerMessage = "Wir verwenden u.a. Cookies zur optimierten Darstellung und Auswertung, sowie zur Verbesserung unserer Website und unserer Services. Sollten Sie damit nicht einverstanden sein treffen Sie hier ihre Datenschutzeinstellungen. Mit dem Klick auf 'Anwenden' werden Ihre Einstellungen �bernommen.";
 
 var debug = true;
 
@@ -63,7 +63,7 @@ class CookieMonster
             var cookie = cookieManager.GetCookie(name);
             if (cookie != undefined && !additive)
             {
-                new Cookie(name, "", this.GetExpirationDateString(1, true)).SetCookie();
+                new Cookie(name, "", this.GetMaxAge(1, true)).SetCookie();
             }
             // give the cookie to the cookiemonster
             var c = new Cookie(name, value, expirationDate);
@@ -149,6 +149,7 @@ class Banner
         this.analyticsManager = analyticsManager;
         this.IsSetDemoTheme = false;
         this.InitializeBody();
+        this.hidden = false;
     }
 
     get GetBody()
@@ -219,18 +220,20 @@ class Banner
 
     InitializeDemoBody()
     {
-        this.body = '<style>#iam-OptInBanner{position: absolute; display: flex; background-color: black; color: #fff; flex-direction: column; justify-content: center; align-content: center; align-items: center; bottom: 0; height: 15%; width: 100%;}#iam-OptInBanner-Content{position: absolute; display: flex; justify-content: center; padding: 15px; color: #fff; text-align: center; top: 0; left: 0; right: 0; margin: 0;}#iam-OptInBanner-ButtonWrapper{display: flex; position: absolute; justify-content: center; bottom: 0; left: 0; right: 0; padding-right: 30px; padding-bottom: 15px; padding-top: 15px;}#iam-OptInBanner-Button, #iam-OptInBanner-ButtonMore{flex-direction: column; color: #fff; min-width: 150px; background-color: #000; padding-left: 15px; padding-right: 15px; padding-top: 10px; padding-bottom: 10px; margin-left: 15px; margin-right: 15px; border: solid 1px #fff;}#iam-OptInBanner-Button:hover, #iam-OptInBanner-ButtonMore:hover{background-color: #fff; color: #000; border: solid 1px #fff;}</style> <div id="iam-OptInBanner" class="iam-OptIn-Cookies iam-OptIn-Analytics"> <div id="iam-OptInBanner-Content"> Um die Benutzererfahrung zu verbessern verwenden wir gängige techniken wie Cookies und Google Analyitcs. Um unsere Webseite uneingeschränkt nutzen zu können stimmen Sie einfach der Nutzung dieser Dienste zu. </div><div id="iam-OptInBanner-Options"> <form> <b>Aktive Optionen:</b> <input id="iam-ChkCookie" type="checkbox" name="ChkCookie" value="UseCookies" checked><label> Cookie-Nutzung</label> <input id="iam-ChkAnalytics" type="checkbox" name="ChkAnalytics" value="UseAnalytics" checked><label> Google Analytics</label> </form> </div><div id="iam-OptInBanner-ButtonWrapper"> <button id="iam-OptInBanner-Button"> Akzeptieren </button> <button id="iam-OptInBanner-ButtonMore"> Mehr Erfahren </button> </div></div>';
-        document.body.append(this.body);
+        this.body = '<style>#iam-OptInBanner{position: fixed; display: flex; background-color: black; color: #fff; flex-direction: column; bottom: 0; height: 175px; width: 100%;}#iam-OptInBanner-Content{display: flex; justify-content: center; padding: 15px; padding-left: 150px; padding-right: 150px; color: #fff; text-align: center; margin: 0;}#iam-OptInBanner-Options{display: flex; margin-left: auto; margin-right: auto;}#iam-ChkCookie, #iam-ChkAnalytics{margin-left: 15px;}#iam-OptInBanner-Options label{margin-left: 8px;}#iam-OptInBanner-ButtonWrapper{display: flex; position: absolute; justify-content: center; bottom: 0; left: 0; right: 0; padding-right: 30px; padding-bottom: 15px; padding-top: 15px;}#iam-OptInBanner-Button, #iam-OptInBanner-ButtonMore{flex-direction: column; color: #fff; min-width: 150px; background-color: #000; padding-left: 15px; padding-right: 15px; padding-top: 10px; padding-bottom: 10px; margin-left: 15px; margin-right: 15px; border: solid 1px #fff;}#iam-OptInBanner-Button:hover, #iam-OptInBanner-ButtonMore:hover{background-color: #fff; color: #000; border: solid 1px #fff;}@media only screen and (max-width: 960px){#iam-OptInBanner{height: 20%;}#iam-OptInBanner-Content{padding-left: 15px; padding-right: 15px;}}</style><div id="iam-OptInBanner" class="iam-OptIn-Cookies iam-OptIn-Analytics"> <div id="iam-OptInBanner-Content"> Wir verwenden u.a. Cookies zur optimierten Darstellung und Auswertung, sowie zur Verbesserung unserer Website und unserer Services. Sollten Sie damit nicht einverstanden sein Ändern Sie hier ihre Datenschutzeinstellungen. Mit dem Klick auf "Anwenden" werden Ihre Einstellungen übernommen. </div><div id="iam-OptInBanner-Options"> <b>Aktive Optionen:</b> <input id="iam-ChkCookie" type="checkbox" name="ChkCookie" value="UseCookies" checked><label> Cookie-Nutzung</label> <input id="iam-ChkAnalytics" type="checkbox" name="ChkAnalytics" value="UseAnalytics" checked><label> Google Analytics</label> </div><div id="iam-OptInBanner-ButtonWrapper"> <button id="iam-OptInBanner-Button"> Anwenden </button> <button id="iam-OptInBanner-ButtonMore"> Mehr Erfahren </button> </div></div><style>#iam-OptInManager{display: none; position: fixed; bottom: 0; background-color: #000; color: #fff; padding-top: 15px; padding-bottom: 15px; padding-left: 30px; padding-right: 30px; margin-left: 50px;}</style><a href="#" id="iam-OptInManager"> Datenschutzeinstellungen</a>';
+        document.body.innerHTML += (this.body);
     }
 
     Hide()
     {
+        this.hidden = true;
         document.getElementById("iam-OptInBanner").style.display = "none";
         document.getElementById("iam-OptInManager").style.display = "block";
     }
 
     Show()
     {
+        this.hidden = false;
         document.getElementById("iam-OptInBanner").style.display = "flex";
         document.getElementById("iam-OptInManager").style.display = "none";
 
@@ -304,6 +307,24 @@ class AnalyticsManager
     }
 }
 
+function startTimer(duration, banner)
+{
+    var timer = duration, minutes, seconds;
+    setInterval(function ()
+    {
+        minutes = parseInt(timer / 60, 10);
+        seconds = parseInt(timer % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        if (--timer == 0 && !banner.hidden)
+        {
+            banner.Hide();
+        }
+    }, 1000);
+}
+
 // Run cookie-check and Opt-In modules
 document.addEventListener('DOMContentLoaded', function(event) 
 {
@@ -321,8 +342,9 @@ document.addEventListener('DOMContentLoaded', function(event)
         cookieManager.mainCookie.SetCookie();
     }
 
-    if (cookieManager.googleAnalytics.value == "allow")
+    if (cookieManager.googleAnalytics.value == "allow" || cookieManager.googleAnalytics.value == undefined)
     {
+        cookieManager.googleAnalytics.SetCookie("allow");
         analyticsManager.LoadAndExecute();
     } else 
     {
@@ -341,4 +363,7 @@ document.addEventListener('DOMContentLoaded', function(event)
     // Launch Google Analytics
     if (cookieManager.googleAnalytics.value == "allow" || !analyticsOptInMode)
         analyticsManager.LoadAndExecute();
+    
+    var fiveMinutes = 10 ;
+    startTimer(fiveMinutes, optInBanner);
 })

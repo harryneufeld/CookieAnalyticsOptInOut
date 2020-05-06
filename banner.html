@@ -6,16 +6,12 @@
         background-color: black;
         color: #fff;
         flex-direction: column;
-        justify-content: center;
-        align-content: center;
-        align-items: center;
         bottom: 0;
         height: 175px;
         width: 100%;
     }
 
     #iam-OptInBanner-Content {
-        position: absolute;
         display: flex;
         justify-content: center;
         padding: 15px;
@@ -23,11 +19,25 @@
         padding-right: 150px;
         color: #fff;
         text-align: center;
-        top: 0;
-        left: 0;
-        right: 0;
         margin: 0;
     }
+
+    #iam-OptInBanner-Options
+    {
+        display: flex;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    #iam-ChkCookie, #iam-ChkAnalytics
+    {
+        margin-left: 15px;
+    }
+
+     #iam-OptInBanner-Options label
+     {
+         margin-left: 8px;
+     }
 
     #iam-OptInBanner-ButtonWrapper {
         display: flex;
@@ -79,9 +89,9 @@
     <div id="iam-OptInBanner-Content">
         Wir verwenden u.a. Cookies zur optimierten Darstellung und Auswertung, sowie zur Verbesserung unserer Website
         und
-        unserer Services. Sollten Sie damit nicht einverstanden sein treffen Sie hier ihre Datenschutzeinstellungen. Mit
+        unserer Services. Sollten Sie damit nicht einverstanden sein �ndern Sie hier ihre Datenschutzeinstellungen. Mit
         dem
-        Klick auf 'Anwenden' werden Ihre Einstellungen übernommen.
+        Klick auf "Anwenden" werden Ihre Einstellungen übernommen.
     </div>
     <div id="iam-OptInBanner-Options">
         <b>Aktive Optionen:</b>
@@ -107,7 +117,6 @@
         display: none;
         position: fixed;
         bottom: 0;
-        width: 150px;
         background-color: #000;
         color: #fff;
         padding-top: 15px;
