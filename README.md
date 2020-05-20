@@ -22,7 +22,7 @@ Change the value "analyticsTrackingId" to your Tracking-Id of google.
 
 ### Opt-Out
 If you use it as Opt-Out it will initialize the Website with Cookies and Google Analyitcs activated. 
-You can let the Banner inform the User and show the possibility of Opt-Out and Fade-Out the Banner after x seconds (FadeOut not given yet).
+You can let the Banner inform the User and show the possibility of Opt-Out and Fade-Out the Banner after x seconds.
 
 ### Opt-In
 If you use it as Opt-In you have to change the value of "analyticsOptInMode" to `true`.
