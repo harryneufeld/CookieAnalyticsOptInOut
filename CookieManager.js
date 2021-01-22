@@ -12,7 +12,7 @@ if (analyticsTrackingId == undefined)
     var analyticsTrackingId = "UA-TEST-1";
 /* GOOGLE ANALYTICS - SET Opt-In instead of Opt-Out */
 if (analyticsOptInMode == undefined)
-    var analyticsOptInMode = false;
+    var analyticsOptInMode = true;
 /* BANNER - SET Banner Message */
 if (bannerMessage == undefined)
     var bannerMessage = "Wir verwenden u.a. Cookies zur optimierten Darstellung und Auswertung, sowie zur Verbesserung unserer Website und unserer Services. Sollten Sie damit nicht einverstanden sein treffen Sie hier ihre Datenschutzeinstellungen. Mit dem Klick auf 'Anwenden' werden Ihre Einstellungen �bernommen.";
@@ -187,6 +187,19 @@ class Banner
         this.Hide();
     }
 
+    AcceptAllButtonClick()
+    {
+        // Setting Cookies
+        this.cookieManager.mainCookie.value = "allow";
+        this.cookieManager.mainCookie.SetCookie();
+        // Setting Analytics
+        this.cookieManager.googleAnalytics.value = "allow";
+        this.cookieManager.googleAnalytics.SetCookie();
+        this.analyticsManager.LoadAndExecute();
+
+        this.Hide();
+    }
+
     IsCookiesEnabled()
     {
         if (document.getElementById("iam-ChkCookie").checked)
@@ -214,14 +227,18 @@ class Banner
             this.body = document.getElementById("iam-OptInBanner").html;
         }
 
-        if (this.cookieManager.mainCookie.value != undefined && this.cookieManager.googleAnalytics.value != undefined)
+        if (this.cookieManager.mainCookie.value == "allow" && this.cookieManager.googleAnalytics.value == "allow")
             this.Hide();
     }
 
     InitializeDemoBody()
     {
-        this.body = '<style>#iam-OptInBanner{position: fixed; display: flex; background-color: black; color: #fff; flex-direction: column; bottom: 0; height: 175px; width: 100%;}#iam-OptInBanner-Content{display: flex; justify-content: center; padding: 15px; padding-left: 150px; padding-right: 150px; color: #fff; text-align: center; margin: 0;}#iam-OptInBanner-Options{display: flex; margin-left: auto; margin-right: auto;}#iam-ChkCookie, #iam-ChkAnalytics{margin-left: 15px;}#iam-OptInBanner-Options label{margin-left: 8px;}#iam-OptInBanner-ButtonWrapper{display: flex; position: absolute; justify-content: center; bottom: 0; left: 0; right: 0; padding-right: 30px; padding-bottom: 15px; padding-top: 15px;}#iam-OptInBanner-Button, #iam-OptInBanner-ButtonMore{flex-direction: column; color: #fff; min-width: 150px; background-color: #000; padding-left: 15px; padding-right: 15px; padding-top: 10px; padding-bottom: 10px; margin-left: 15px; margin-right: 15px; border: solid 1px #fff;}#iam-OptInBanner-Button:hover, #iam-OptInBanner-ButtonMore:hover{background-color: #fff; color: #000; border: solid 1px #fff;}@media only screen and (max-width: 960px){#iam-OptInBanner{height: 20%;}#iam-OptInBanner-Content{padding-left: 15px; padding-right: 15px;}}</style><div id="iam-OptInBanner" class="iam-OptIn-Cookies iam-OptIn-Analytics"> <div id="iam-OptInBanner-Content"> Wir verwenden u.a. Cookies zur optimierten Darstellung und Auswertung, sowie zur Verbesserung unserer Website und unserer Services. Sollten Sie damit nicht einverstanden sein Ändern Sie hier ihre Datenschutzeinstellungen. Mit dem Klick auf "Anwenden" werden Ihre Einstellungen übernommen. </div><div id="iam-OptInBanner-Options"> <b>Aktive Optionen:</b> <input id="iam-ChkCookie" type="checkbox" name="ChkCookie" value="UseCookies" checked><label> Cookie-Nutzung</label> <input id="iam-ChkAnalytics" type="checkbox" name="ChkAnalytics" value="UseAnalytics" checked><label> Google Analytics</label> </div><div id="iam-OptInBanner-ButtonWrapper"> <button id="iam-OptInBanner-Button"> Anwenden </button> <button id="iam-OptInBanner-ButtonMore"> Mehr Erfahren </button> </div></div><style>#iam-OptInManager{display: none; position: fixed; bottom: 0; background-color: #000; color: #fff; padding-top: 15px; padding-bottom: 15px; padding-left: 30px; padding-right: 30px; margin-left: 50px;}</style><a href="#" id="iam-OptInManager"> Datenschutzeinstellungen</a>';
+        this.body = '<!--Cookie / Analytics Banner - DEMO BODY--><style>#iam-OptInBanner{position: fixed; display: flex; background-color: black; color: #fff; flex-direction: column; bottom: 0; height: 175px; width: 100%;}#iam-OptInBanner-Content{display: flex; justify-content: center; padding: 15px; padding-left: 150px; padding-right: 150px; color: #fff; text-align: center; margin: 0;}#iam-OptInBanner-Options{display: flex; margin-left: auto; margin-right: auto;}#iam-ChkCookie, #iam-ChkAnalytics{margin-left: 15px;}#iam-OptInBanner-Options label{margin-left: 8px;}#iam-OptInBanner-ButtonWrapper{display: flex; position: absolute; justify-content: center; bottom: 0; left: 0; right: 0; padding-right: 30px; padding-bottom: 15px; padding-top: 15px;}#iam-OptInBanner-Button, #iam-OptInBanner-ButtonMore, #iam-OptInBanner-AcceptAll{flex-direction: column; color: #fff; min-width: 150px; background-color: #000; padding-left: 15px; padding-right: 15px; padding-top: 10px; padding-bottom: 10px; margin-left: 15px; margin-right: 15px; border: solid 1px #fff;}.iam-ButtonDefault{background-color: #fff !important; border-color: #000 !important; color: #000 !important;}.iam-ButtonDefault:hover{background-color: #000 !important; border-color: #fff !important; color: #fff !important;}#iam-OptInBanner-Button:hover, #iam-OptInBanner-ButtonMore:hover{background-color: #fff; color: #000; border: solid 1px #fff;}@media only screen and (max-width: 960px){#iam-OptInBanner{height: 20%;}#iam-OptInBanner-Content{padding-left: 15px; padding-right: 15px;}}</style><div id="iam-OptInBanner" class="iam-OptIn-Cookies iam-OptIn-Analytics"> <div id="iam-OptInBanner-Content"> <p>Wir verwenden u.a. Cookies zur optimierten Darstellung und Auswertung, sowie zur Verbesserung unserer Website und unserer Services. Klicken Sie auf <b>Akzeptieren</b> um der Datenschutzerklärung zuzustimmen.</p></div><div id="iam-OptInBanner-Options"> <b>Datenschutz-Optionen:</b> <input id="iam-ChkCookie" type="checkbox" name="ChkCookie" value="UseCookies" checked><label> Notwendige Cookies</label> <input id="iam-ChkAnalytics" type="checkbox" name="ChkAnalytics" value="UseAnalytics"><label> Google Analytics</label> </div><div id="iam-OptInBanner-ButtonWrapper"> <button id="iam-OptInBanner-AcceptAll" class="iam-ButtonDefault"> Akzeptieren </button> <button id="iam-OptInBanner-Button" style="display: none;"> Übernehmen </button> <button id="iam-OptInBanner-ButtonMore"> Mehr Optionen </button> </div></div><style>#iam-OptInManager{display: none; position: fixed; bottom: 0; background-color: #000; color: #fff; padding-top: 15px; padding-bottom: 15px; padding-left: 30px; padding-right: 30px; margin-left: 50px;}</style><a href="#" id="iam-OptInManager"> Datenschutzeinstellungen</a><!--DEMO BODY END-->';
         document.body.innerHTML += (this.body);
+
+        // First hide save button
+        var button = document.getElementById("iam-OptInBanner-Button");
+        button.style.display = "none";
     }
 
     Hide()
@@ -250,6 +267,16 @@ class Banner
             document.getElementById("iam-ChkAnalytics").checked = true;
         else
             document.getElementById("iam-ChkAnalytics").checked = false;
+    }
+
+    DeclineButtonClick()
+    {
+        var button = document.getElementById("iam-OptInBanner-Button");
+        
+        if (button.style.display == "none")
+            button.style.display = "initial";
+        else
+            button.style.display = "none";
     }
 
 }
@@ -302,8 +329,10 @@ class AnalyticsManager
         if (debug)
             console.log("Unloading Google Analytics");
         
-        this.extScript.remove();
-        this.analyticsScript.remove();
+        if (this.extScript != undefined)
+            this.extScript.remove();
+        if (this.analyticsScript != undefined)
+            this.analyticsScript.remove();
     }
 }
 
@@ -342,7 +371,7 @@ document.addEventListener('DOMContentLoaded', function(event)
         cookieManager.mainCookie.SetCookie();
     }
 
-    if (cookieManager.googleAnalytics.value == "allow" || cookieManager.googleAnalytics.value == undefined)
+    if (cookieManager.googleAnalytics.value == "allow" || (cookieManager.googleAnalytics.value == undefined && !analyticsOptInMode))
     {
         cookieManager.googleAnalytics.SetCookie("allow");
         analyticsManager.LoadAndExecute();
@@ -353,17 +382,30 @@ document.addEventListener('DOMContentLoaded', function(event)
     }
 
     // Button Events
+    if (document.getElementById("iam-OptInBanner-AcceptAll") != null)
+        document.getElementById("iam-OptInBanner-AcceptAll").onclick = function () { optInBanner.AcceptAllButtonClick() };
     if (document.getElementById("iam-OptInBanner-Button") != null)
         document.getElementById("iam-OptInBanner-Button").onclick = function () { optInBanner.AcceptButtonClick() };
     if (document.getElementById("iam-OptInBanner-ButtonMore") != null)
         document.getElementById("iam-OptInBanner-ButtonMore").onclick = function () { optInBanner.DeclineButtonClick() };
     if (document.getElementById("iam-OptInManager") != null)
         document.getElementById("iam-OptInManager").onclick = function () { optInBanner.Show() };
+    // Notwendige Cookies kann man nicht deaktivieren
+    if (document.getElementById("iam-ChkCookie") != null)
+        document.getElementById("iam-ChkCookie").onclick = function ()
+        {
+            this.checked = true;
+        };
+    
     
     // Launch Google Analytics
     if (cookieManager.googleAnalytics.value == "allow" || !analyticsOptInMode)
         analyticsManager.LoadAndExecute();
     
-    var fiveMinutes = 10 ;
-    startTimer(fiveMinutes, optInBanner);
+    // Only Start Time if its Opt-Out
+    if (!analyticsOptInMode)
+    {
+        var fiveMinutes = 10;
+        startTimer(fiveMinutes, optInBanner);
+    }
 })

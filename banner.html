@@ -52,7 +52,8 @@
     }
 
     #iam-OptInBanner-Button,
-    #iam-OptInBanner-ButtonMore {
+    #iam-OptInBanner-ButtonMore,
+    #iam-OptInBanner-AcceptAll {
         flex-direction: column;
         color: #fff;
         min-width: 150px;
@@ -64,6 +65,18 @@
         margin-left: 15px;
         margin-right: 15px;
         border: solid 1px #fff;
+    }
+
+    .iam-ButtonDefault {
+        background-color: #fff !important;
+        border-color: #000 !important;
+        color: #000 !important;
+    }
+
+    .iam-ButtonDefault:hover {
+        background-color: #000 !important;
+        border-color: #fff !important;
+        color: #fff !important;
     }
 
     #iam-OptInBanner-Button:hover,
@@ -87,25 +100,26 @@
 
 <div id="iam-OptInBanner" class="iam-OptIn-Cookies iam-OptIn-Analytics">
     <div id="iam-OptInBanner-Content">
-        Wir verwenden u.a. Cookies zur optimierten Darstellung und Auswertung, sowie zur Verbesserung unserer Website
+        <p>Wir verwenden u.a. Cookies zur optimierten Darstellung und Auswertung, sowie zur Verbesserung unserer Website
         und
-        unserer Services. Sollten Sie damit nicht einverstanden sein �ndern Sie hier ihre Datenschutzeinstellungen. Mit
-        dem
-        Klick auf "Anwenden" werden Ihre Einstellungen übernommen.
+        unserer Services. Klicken Sie auf <b>Akzeptieren</b> um der Datenschutzerklärung zuzustimmen.</p>
     </div>
     <div id="iam-OptInBanner-Options">
-        <b>Aktive Optionen:</b>
+        <b>Datenschutz-Optionen:</b>
         <input id="iam-ChkCookie" type="checkbox" name="ChkCookie" value="UseCookies" checked><label>
-            Cookie-Nutzung</label>
-        <input id="iam-ChkAnalytics" type="checkbox" name="ChkAnalytics" value="UseAnalytics" checked><label> Google
+            Notwendige Cookies</label>
+        <input id="iam-ChkAnalytics" type="checkbox" name="ChkAnalytics" value="UseAnalytics"><label> Google
             Analytics</label>
     </div>
     <div id="iam-OptInBanner-ButtonWrapper">
-        <button id="iam-OptInBanner-Button">
-            Anwenden
+        <button id="iam-OptInBanner-AcceptAll" class="iam-ButtonDefault">
+            Akzeptieren
+        </button>
+        <button id="iam-OptInBanner-Button" style="display: none;">
+            Übernehmen
         </button>
         <button id="iam-OptInBanner-ButtonMore">
-            Mehr Erfahren
+            Mehr Optionen
         </button>
     </div>
 </div>
