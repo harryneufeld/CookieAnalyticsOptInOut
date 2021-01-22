@@ -238,7 +238,7 @@ class Banner
 
         // First hide save button
         var button = document.getElementById("iam-OptInBanner-Button");
-        button.setAttribute("display", "none").style.display = "none";
+        button.style.display = "none";
     }
 
     Hide()
