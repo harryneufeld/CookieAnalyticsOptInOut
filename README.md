@@ -1,4 +1,4 @@
-# Cookie & Google Analytics Opt-In & Opt-Out Manager 
+# Opt-In & Opt-Out Cookie & Google Analytics Manager
 JS web based Cookie and Google Analytics (and so on) Manager
 Works with Webflow Websites, Wordpress and anything else.
 
